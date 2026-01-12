@@ -9,107 +9,360 @@
 <meta name="theme-color" content="#0b0f1a">
 
 <style>
-body{font-family:Arial,Helvetica,sans-serif;background:#0b0f1a;color:#fff;margin:0;padding:20px}
-.wrap{max-width:900px;margin:auto}
-.card{background:#141827;border:1px solid #2a2f45;border-radius:12px;padding:15px;margin-bottom:15px}
-textarea{width:100%;height:180px;background:#0d1020;color:#fff;border:1px solid #2a2f45;border-radius:10px;padding:10px}
-button{background:#d4af37;color:#111;border:none;border-radius:10px;padding:10px 15px;font-weight:bold;cursor:pointer}
-.dark{background:#2c3350;color:#fff}
-.big{font-size:22px;font-weight:bold;margin-top:10px}
-.pill{display:inline-block;background:#1b223a;padding:6px 12px;border-radius:999px;font-size:13px}
+  body{font-family:Arial,Helvetica,sans-serif;background:#0b0f1a;color:#fff;margin:0;padding:20px}
+  .wrap{max-width:980px;margin:auto}
+  h1{margin:0 0 12px 0;font-size:22px}
+  .card{background:#141827;border:1px solid #2a2f45;border-radius:12px;padding:14px;margin:12px 0}
+  textarea{width:100%;min-height:180px;background:#0d1020;color:#fff;border:1px solid #2a2f45;border-radius:10px;padding:10px;font-size:14px;resize:vertical}
+  button{border:0;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;margin-right:8px}
+  .gold{background:#d4af37;color:#111}
+  .dark{background:#2c3350;color:#fff}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .pill{background:#1b223a;border:1px solid #2a2f45;border-radius:999px;padding:6px 10px;font-size:13px}
+  .big{font-size:20px;font-weight:900;margin-top:4px}
+  .muted{color:#a9b2d6}
+  .status{padding:10px;border-radius:10px;margin-top:10px;border:1px solid #2a2f45;background:#0d1020}
+  input[type="range"]{width:220px}
+  select{background:#0d1020;color:#fff;border:1px solid #2a2f45;border-radius:10px;padding:8px 10px}
+  label{display:flex;align-items:center;gap:8px;cursor:pointer}
 </style>
 </head>
 
 <body>
 <div class="wrap">
-<h2>Practice Play</h2>
+  <h1>Practice Play (EN xN → PT x1 → Next)</h1>
 
-<div class="card">
-<textarea id="phrases">
-I think so. | Eu acho que sim.
-I don’t think so. | Eu não acho que sim.
-It depends. | Depende.
-That makes sense. | Isso faz sentido.
-I’m not sure. | Não tenho certeza.
-</textarea>
-<br><br>
-<button onclick="start()">▶ Play</button>
-<button class="dark" onclick="stop()">⏹ Stop</button>
-</div>
+  <div class="card">
+    <div class="row">
+      <div class="pill">Formato: <b>English | Portuguese</b> (1 por linha)</div>
+      <div class="pill">Ex: <b>How are you? | Como você está?</b></div>
+    </div>
 
-<div class="card">
-<div class="pill">Frase: <span id="counter">0</span></div>
-<div class="big" id="en">—</div>
-<div id="pt" style="margin-top:10px;color:#a9b2d6"></div>
-</div>
+    <textarea id="phrases"></textarea>
+
+    <div class="row" style="margin-top:10px">
+      <button class="gold" id="saveList">Salvar lista</button>
+      <button class="dark" id="loadList">Carregar lista</button>
+      <button class="dark" id="clearList">Limpar</button>
+    </div>
+
+    <div class="muted" style="margin-top:8px">
+      Dica: no celular, “Add to Home Screen” (GitHub Pages) para ficar offline.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button class="gold" id="playBtn">▶ Play</button>
+      <button class="dark" id="pauseBtn">⏸ Pause</button>
+      <button class="dark" id="resumeBtn">▶ Resume</button>
+      <button class="dark" id="nextBtn">⏭ Next</button>
+      <button class="dark" id="stopBtn">⏹ Stop</button>
+      <div class="pill">Frase: <span id="counter">0/0</span></div>
+    </div>
+
+    <div style="margin-top:12px">
+      <div class="muted">Inglês:</div>
+      <div class="big" id="enText">—</div>
+
+      <div class="muted" style="margin-top:10px">Português:</div>
+      <div class="status" id="ptText">—</div>
+
+      <div class="status" id="status">Status: pronto.</div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div class="pill">Velocidade</div>
+      <input id="rate" type="range" min="0.6" max="1.2" step="0.05" value="0.9"/>
+      <div class="pill">rate: <span id="rateVal">0.9</span></div>
+
+      <div class="pill">Repetições (EN)</div>
+      <select id="reps">
+        <option value="1">1x</option>
+        <option value="2">2x</option>
+        <option value="3" selected>3x</option>
+        <option value="5">5x</option>
+      </select>
+
+      <label class="pill">
+        <input id="pauseEach" type="checkbox">
+        Pause after each phrase
+      </label>
+    </div>
+
+    <div class="muted" style="margin-top:10px">
+      Se ele “misturar línguas”, normalmente é voz do sistema. Esse código força a voz EN e PT quando disponível.
+    </div>
+  </div>
 </div>
 
 <script>
-let list=[];
-let i=0;
-let running=false;
+/* =========================
+   Keys (localStorage)
+========================= */
+const KEY_LIST = "practice_play_list_v1";
+const KEY_CFG  = "practice_play_cfg_v1";
 
-function parse(){
-  list = document.getElementById("phrases").value
-    .split("\n")
-    .map(l=>l.trim())
-    .filter(l=>l.includes("|"))
-    .map(l=>{
-      let p=l.split("|");
-      return {en:p[0].trim(),pt:p[1].trim()};
-    });
+/* =========================
+   Elements
+========================= */
+const phrasesTA = document.getElementById("phrases");
+const saveList  = document.getElementById("saveList");
+const loadList  = document.getElementById("loadList");
+const clearList = document.getElementById("clearList");
+
+const playBtn   = document.getElementById("playBtn");
+const pauseBtn  = document.getElementById("pauseBtn");
+const resumeBtn = document.getElementById("resumeBtn");
+const nextBtn   = document.getElementById("nextBtn");
+const stopBtn   = document.getElementById("stopBtn");
+
+const enText    = document.getElementById("enText");
+const ptText    = document.getElementById("ptText");
+const counter   = document.getElementById("counter");
+const statusBox = document.getElementById("status");
+
+const rate      = document.getElementById("rate");
+const rateVal   = document.getElementById("rateVal");
+const repsSel   = document.getElementById("reps");
+const pauseEach = document.getElementById("pauseEach");
+
+/* =========================
+   Default list + Load saved
+========================= */
+const defaultList =
+`I think so. | Eu acho que sim.
+I don’t think so. | Eu não acho que sim.
+It depends. | Depende.
+That makes sense. | Isso faz sentido.
+I’m not sure. | Não tenho certeza.`;
+
+phrasesTA.value = localStorage.getItem(KEY_LIST) || defaultList;
+
+/* =========================
+   Save/Load/Clear list
+========================= */
+saveList.onclick = () => {
+  localStorage.setItem(KEY_LIST, (phrasesTA.value || "").trim());
+  alert("✅ Lista salva!");
+};
+loadList.onclick = () => {
+  phrasesTA.value = localStorage.getItem(KEY_LIST) || defaultList;
+  alert("📥 Lista carregada!");
+};
+clearList.onclick = () => { phrasesTA.value = ""; };
+
+/* =========================
+   Config load/save
+========================= */
+function loadCfg(){
+  try{
+    const cfg = JSON.parse(localStorage.getItem(KEY_CFG) || "{}");
+    if(typeof cfg.rate === "number") rate.value = String(cfg.rate);
+    if(typeof cfg.reps === "string") repsSel.value = cfg.reps;
+    if(typeof cfg.pauseEach === "boolean") pauseEach.checked = cfg.pauseEach;
+  }catch(e){}
+  rateVal.textContent = rate.value;
+}
+function saveCfg(){
+  const cfg = {
+    rate: parseFloat(rate.value),
+    reps: repsSel.value,
+    pauseEach: !!pauseEach.checked
+  };
+  localStorage.setItem(KEY_CFG, JSON.stringify(cfg));
+}
+rate.addEventListener("input", () => { rateVal.textContent = rate.value; saveCfg(); });
+repsSel.addEventListener("change", saveCfg);
+pauseEach.addEventListener("change", saveCfg);
+loadCfg();
+
+/* =========================
+   Parse list
+========================= */
+function parseList(text){
+  const lines = (text || "").split("\n").map(l => l.trim()).filter(Boolean);
+  const items = [];
+  for(const line of lines){
+    const parts = line.split("|").map(p => p.trim());
+    if(parts.length >= 2 && parts[0] && parts[1]){
+      items.push({en: parts[0], pt: parts.slice(1).join(" | ")});
+    }
+  }
+  return items;
 }
 
-function speak(text,lang){
-  return new Promise(r=>{
-    let u=new SpeechSynthesisUtterance(text);
-    u.lang=lang;
-    u.rate=1;
-    u.onend=r;
-    speechSynthesis.cancel();
+/* =========================
+   Voice selection (fix “mix language”)
+========================= */
+let voices = [];
+let voiceEN = null;
+let voicePT = null;
+
+function pickVoices(){
+  voices = speechSynthesis.getVoices() || [];
+
+  // Prefer en-GB, fallback en-*
+  voiceEN = voices.find(v => /^en-GB/i.test(v.lang)) ||
+            voices.find(v => /^en-/i.test(v.lang)) ||
+            null;
+
+  // Prefer pt-BR, fallback pt-PT, then pt-*
+  voicePT = voices.find(v => /^pt-BR/i.test(v.lang)) ||
+            voices.find(v => /^pt-PT/i.test(v.lang)) ||
+            voices.find(v => /^pt-/i.test(v.lang)) ||
+            null;
+}
+
+// Some browsers load voices async
+speechSynthesis.onvoiceschanged = () => pickVoices();
+pickVoices();
+
+/* =========================
+   Speech (promise-based)
+========================= */
+function speak(text, lang){
+  return new Promise((resolve) => {
+    if(!text) return resolve();
+
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = parseFloat(rate.value) || 0.9;
+    u.lang = lang;
+
+    // Force a matching voice when available
+    if(lang.startsWith("en") && voiceEN) u.voice = voiceEN;
+    if(lang.startsWith("pt") && voicePT) u.voice = voicePT;
+
+    u.onend = resolve;
+    u.onerror = resolve;
+
+    // Do NOT cancel here (cancel would cut previous speech)
     speechSynthesis.speak(u);
   });
 }
 
-async function playOne(){
-  if(!running || i>=list.length) return;
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-  let item=list[i];
-  document.getElementById("en").innerText=item.en;
-  document.getElementById("pt").innerText=item.pt;
-  document.getElementById("counter").innerText=(i+1)+"/"+list.length;
+/* =========================
+   Player state
+========================= */
+let list = [];
+let idx = 0;
+let running = false;
+let paused = false;
 
-  // inglês 3x
-  for(let x=0;x<3;x++){
-    if(!running) return;
-    await speak(item.en,"en-GB");
+function setStatus(t){ statusBox.textContent = "Status: " + t; }
+function updateCounter(){ counter.textContent = `${Math.min(idx+1, list.length)}/${list.length}`; }
+
+async function runLoop(){
+  while(running){
+    if(paused){
+      await sleep(200);
+      continue;
+    }
+
+    if(!list.length){
+      setStatus("cole suas frases no formato English | Portuguese.");
+      running = false;
+      break;
+    }
+
+    if(idx >= list.length){
+      enText.textContent = "✅ Finalizado!";
+      ptText.textContent = "—";
+      setStatus("acabou a lista.");
+      running = false;
+      break;
+    }
+
+    const item = list[idx];
+    updateCounter();
+    enText.textContent = item.en;
+    ptText.textContent = item.pt;
+
+    // Clear queue before starting a phrase (prevents weird overlaps)
+    speechSynthesis.cancel();
+    await sleep(50);
+
+    setStatus("falando inglês...");
+    const reps = parseInt(repsSel.value, 10) || 3;
+
+    for(let r=0; r<reps; r++){
+      if(!running) break;
+      while(paused) await sleep(200);
+      await speak(item.en, "en-GB");
+      await sleep(180);
+    }
+
+    if(!running) break;
+    while(paused) await sleep(200);
+
+    setStatus("falando português...");
+    await speak(item.pt, "pt-BR");
+
+    if(!running) break;
+
+    // Pause after each phrase (optional)
+    if(pauseEach.checked){
+      paused = true;
+      setStatus("pausado (Pause after each phrase). Clique Resume.");
+      // do not increment until user resumes? -> increment now but wait
+      idx++;
+      continue;
+    }
+
+    idx++;
+    setStatus("próxima...");
+    await sleep(400);
   }
-
-  // português 1x
-  await speak(item.pt,"pt-BR");
-
-  i++;
-  setTimeout(playOne,500);
 }
 
-function start(){
-  parse();
-  i=0;
-  running=true;
-  playOne();
-}
+/* =========================
+   Controls
+========================= */
+playBtn.onclick = () => {
+  list = parseList(phrasesTA.value);
+  idx = 0;
+  running = true;
+  paused = false;
+  setStatus("iniciando...");
+  runLoop();
+};
 
-function stop(){
-  running=false;
+stopBtn.onclick = () => {
+  running = false;
+  paused = false;
   speechSynthesis.cancel();
-}
+  setStatus("parado.");
+};
+
+pauseBtn.onclick = () => {
+  paused = true;
+  speechSynthesis.pause();
+  setStatus("pausado. Clique Resume.");
+};
+
+resumeBtn.onclick = () => {
+  paused = false;
+  speechSynthesis.resume();
+  setStatus("tocando...");
+};
+
+nextBtn.onclick = () => {
+  // next works even when paused
+  idx = Math.min(idx + 1, list.length);
+  paused = false;
+  speechSynthesis.cancel();
+  setStatus("pulou para a próxima.");
+};
+
 </script>
 
 <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js");
-}
+  // PWA / Offline
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js");
+  }
 </script>
-
 </body>
 </html>
