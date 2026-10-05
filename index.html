@@ -1,81 +1,164 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
 
 <title>English Practice</title>
 
-<link rel="stylesheet" href="styles.css">
+<link
+  rel="stylesheet"
+  href="styles.css?v=3"
+>
 
-<!-- Aplicativo -->
-<link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#8c5d32">
+<link
+  rel="manifest"
+  href="./manifest.webmanifest"
+>
 
-<!-- iPhone / celular -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="English Practice">
+<meta
+  name="theme-color"
+  content="#8c5d32"
+>
+
+<meta
+  name="apple-mobile-web-app-capable"
+  content="yes"
+>
+
+<meta
+  name="apple-mobile-web-app-status-bar-style"
+  content="default"
+>
+
+<meta
+  name="apple-mobile-web-app-title"
+  content="English Practice"
+>
 
 </head>
 
+
 <body>
 
+
 <header>
+
   <div>
-    <h1>English Practice</h1>
-    <p>Treino progressivo de palavras e frases</p>
+
+    <h1>
+      English Practice
+    </h1>
+
+    <p>
+      Treino progressivo de palavras e frases
+    </p>
+
   </div>
 
-  <span id="saved">✓ Salvo automaticamente</span>
+  <span id="saved">
+    ✓ Salvo automaticamente
+  </span>
+
 </header>
+
 
 <main>
 
+
 <section id="setup">
+
 
   <div class="card">
 
+
     <div class="headrow">
 
-      <div>
-        <h2>📚 Meu material</h2>
-        <p>Tudo fica salvo neste navegador.</p>
-      </div>
 
       <div>
-        <button id="newMat">+ Novo material</button>
-        <button id="delMat">Excluir</button>
+
+        <h2>
+          📚 Meu material
+        </h2>
+
+        <p>
+          Tudo fica salvo neste navegador.
+        </p>
+
       </div>
+
+
+      <div>
+
+        <button id="newMat">
+          + Novo material
+        </button>
+
+        <button id="delMat">
+          Excluir
+        </button>
+
+      </div>
+
 
     </div>
+
 
     <div class="two">
 
-      <div>
-        <label>Material salvo</label>
-        <select id="matSelect"></select>
-      </div>
 
       <div>
-        <label>Nome</label>
-        <input id="matName">
+
+        <label>
+          Material salvo
+        </label>
+
+        <select id="matSelect"></select>
+
       </div>
+
+
+      <div>
+
+        <label>
+          Nome
+        </label>
+
+        <input id="matName">
+
+      </div>
+
 
     </div>
 
-    <label>Palavras e frases</label>
+
+    <label>
+      Palavras e frases
+    </label>
+
 
     <textarea
       id="raw"
       placeholder="go | cat | book | house | good morning | how are you?"
     ></textarea>
 
+
     <p class="tip">
-      Separe cada item com <b>|</b>
+
+      Separe cada item com
+
+      <b>|</b>
+
     </p>
 
+
     <div class="buttons">
+
 
       <button
         id="organize"
@@ -84,6 +167,7 @@
         Organizar material
       </button>
 
+
       <button
         id="start"
         class="dark"
@@ -91,28 +175,41 @@
         ▶ Começar treino
       </button>
 
+
     </div>
+
 
   </div>
 
 
+
   <div class="card">
+
 
     <div class="headrow">
 
-      <h2>🧩 Material organizado</h2>
+
+      <h2>
+        🧩 Material organizado
+      </h2>
+
 
       <span id="total">
         0 itens
       </span>
 
+
     </div>
+
 
     <div id="summary"></div>
 
+
   </div>
 
+
 </section>
+
 
 
 <section
@@ -120,21 +217,28 @@
   class="hidden"
 >
 
+
   <div class="trainhead">
+
 
     <button id="back">
       ← Material
     </button>
 
+
     <div class="centerhead">
+
 
       <b id="title">
         Meu material
       </b>
 
+
       <span id="progress"></span>
 
+
     </div>
+
 
     <button
       id="menu"
@@ -143,7 +247,9 @@
       ☰
     </button>
 
+
   </div>
+
 
 
   <div
@@ -151,35 +257,52 @@
     class="card hidden"
   >
 
+
     <div class="headrow">
+
 
       <h3>
         ⚙️ Configurações
       </h3>
 
+
       <button id="closeMenu">
         ×
       </button>
 
+
     </div>
+
 
 
     <div class="three">
 
+
       <div>
 
-        <label>Nível</label>
+
+        <label>
+          Nível
+        </label>
+
 
         <select id="level"></select>
+
 
       </div>
 
 
+
       <div>
 
-        <label>Tempo</label>
+
+        <label>
+          Tempo
+        </label>
+
 
         <div class="time">
+
 
           <input
             id="secs"
@@ -188,38 +311,53 @@
             max="300"
           >
 
+
           <span>
             segundos
           </span>
 
+
         </div>
+
 
       </div>
 
 
+
       <div>
 
-        <label>Tamanho</label>
+
+        <label>
+          Tamanho
+        </label>
+
 
         <div class="buttons">
+
 
           <button id="smaller">
             A−
           </button>
 
+
           <button id="autoFont">
             Auto
           </button>
+
 
           <button id="bigger">
             A+
           </button>
 
+
         </div>
+
 
       </div>
 
+
     </div>
+
 
 
     <input
@@ -230,47 +368,85 @@
     >
 
 
+
     <div class="quick">
 
-      <button data-s="1">1s</button>
 
-      <button data-s="2">2s</button>
+      <button data-s="1">
+        1s
+      </button>
 
-      <button data-s="3">3s</button>
 
-      <button data-s="5">5s</button>
+      <button data-s="2">
+        2s
+      </button>
 
-      <button data-s="10">10s</button>
 
-      <button data-s="30">30s</button>
+      <button data-s="3">
+        3s
+      </button>
 
-      <button data-s="60">1min</button>
 
-      <button data-s="120">2min</button>
+      <button data-s="5">
+        5s
+      </button>
 
-      <button data-s="300">5min</button>
+
+      <button data-s="10">
+        10s
+      </button>
+
+
+      <button data-s="30">
+        30s
+      </button>
+
+
+      <button data-s="60">
+        1min
+      </button>
+
+
+      <button data-s="120">
+        2min
+      </button>
+
+
+      <button data-s="300">
+        5min
+      </button>
+
 
     </div>
+
 
   </div>
 
 
+
   <div class="card">
+
 
     <div class="meta">
 
+
       <span id="badge"></span>
 
+
       <span id="clock"></span>
+
 
     </div>
 
 
+
     <div id="stage">
+
 
       <div id="shown">
         READY
       </div>
+
 
 
       <div
@@ -278,9 +454,13 @@
         class="hidden"
       >
 
+
         <div class="answerlabel">
+
           Escreva o que você viu
+
         </div>
+
 
         <input
           id="answer"
@@ -289,18 +469,24 @@
           spellcheck="false"
         >
 
+
         <div id="feedback"></div>
 
+
       </div>
+
 
     </div>
 
 
+
     <div class="controls">
+
 
       <button id="prev">
         ← Anterior
       </button>
+
 
       <button
         id="replay"
@@ -309,6 +495,7 @@
         ↻ Mostrar de novo
       </button>
 
+
       <button
         id="next"
         class="dark"
@@ -316,59 +503,68 @@
         Próximo →
       </button>
 
+
     </div>
 
 
+
     <div class="controls smallcontrols">
+
 
       <button id="prevLevel">
         ← Nível anterior
       </button>
 
+
       <button id="pause">
         ⏸ Pausar
       </button>
+
 
       <button id="nextLevel">
         Próximo nível →
       </button>
 
+
     </div>
+
 
   </div>
 
+
 </section>
+
 
 </main>
 
 
-<script src="app.js"></script>
+
+<script src="app.js?v=3"></script>
 
 
-<!-- Liga o aplicativo offline -->
 <script>
 
 if ("serviceWorker" in navigator) {
 
-  window.addEventListener("load", () => {
+  window.addEventListener(
+    "load",
+    () => {
 
-    navigator.serviceWorker
-      .register("./sw.js")
-      .then(() => {
-        console.log("Aplicativo ativado");
-      })
-      .catch(error => {
-        console.log(
-          "Erro no aplicativo:",
-          error
-        );
-      });
+      navigator.serviceWorker.register(
+        "./sw.js?v=3",
+        {
+          updateViaCache: "none"
+        }
+      );
 
-  });
+    }
+  );
 
 }
 
 </script>
 
+
 </body>
+
 </html>
