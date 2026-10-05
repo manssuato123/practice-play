@@ -12,7 +12,7 @@ button{padding:10px 14px;border-radius:10px;border:1px solid var(--border);backg
 .centerhead{display:flex;flex-direction:column;align-items:center}.hamb{font-size:28px;width:48px;height:48px;padding:0}#closeMenu{font-size:28px;border:0;background:transparent}
 #range{margin-top:10px}.quick{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.quick button{padding:6px 9px}
 #stage{min-height:420px;border:2px solid #bda98c;background:#f8edda;border-radius:18px;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;margin-top:12px}
-#shown{font-weight:800;line-height:1.15;overflow-wrap:anywhere}.answerlabel{font-weight:800;margin-bottom:12px;font-size:18px}
+#shown{font-weight:800;line-height:1.15;overflow-wrap:normal;word-break:normal;max-width:100%}.answerlabel{font-weight:800;margin-bottom:12px;font-size:18px}
 #answerBox{width:min(760px,95%)}#answer{font-size:36px;font-weight:700;text-align:center;min-height:86px;border:2px solid #8d7457}
 #answer:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 5px #8c5d3226}#feedback{min-height:28px;margin-top:10px;font-size:18px;font-weight:800;color:#2f7b42}
 .controls{justify-content:center;flex-wrap:wrap;margin-top:15px}.smallcontrols{margin-top:9px}.meta{margin-top:4px}
